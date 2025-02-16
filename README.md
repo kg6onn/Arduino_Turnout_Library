@@ -6,12 +6,17 @@ for a model railroad.  It uses Arduino millis() function for slow motion control
 utilizing the library for multiple turnouts.
 
 The library contains an overloaded constructor so you have the option of controling a turnout with the library's 
-built-in push button control or using your own system to determine when the turnout will be thrown.  It is also possible to use the built-in pushbutton and other methods of conrol as well.  This will all be explained in this documentation.
+built-in push button control or using your own system to determine when the turnout will be thrown.  It is also possible to use the built-in pushbutton and other methods of control as well.  This will all be explained in this documentation.
 
 Installing Library:
 
 Place the "Turnout" directory in your Arduino "libraries" directory.  The turnout library includes the Arduino
 Servo library so there is no need to import Servo into your main sketch.
+
+Including Library:
+
+Place #include "Turnout.h" at the top of your sketch.  There is no need to import Arduino's Servo library as this
+is handled by the Turnout library.
 
 Constructor:
 
