@@ -22,7 +22,7 @@ is done for you.  It is as follows:
 
 Turnout(int buttonPin, int servoPin, int straight, int divergent, long stepDelay)
 
-buttonPin: The Arduino pin used for a pushbutton.  It is set up in the library as INPUT_PULLUP so no 
+buttonPin: The pin used for a pushbutton.  It is set up in the library as INPUT_PULLUP so no 
            pull up resistor is necessary.
 
 servoPin:  The Arduino pin that connects to the control line of the servo.
