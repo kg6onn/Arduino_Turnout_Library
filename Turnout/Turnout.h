@@ -15,42 +15,46 @@ class Turnout
 	public:
 		Turnout(int servoPin, int straight, int divergent, long stepDelay);  // Default constructor
 		Turnout(int buttonPin, int servoPin, int straight, int divergent, long stepDelay);  // Overloaded constructor
-		void TurnoutSetup();
-		void Update();
+		void turnoutSetup();
+		void update();
 		int getPosition();
 		int getActualPosition();
 		void setTurnout();
+		void cmriTurnout(byte state);
 		
 	private:
-		boolean StartTimer(unsigned long &_timer, long interval);
+		boolean startTimer(unsigned long &_timer, long interval);
 		void checkButton();
 		void throwTurnout();
 		
 		// hold angle
-		int _straight;
-		int _divergent;
+		int straight;
+		int divergent;
 		
 		// button and servo pins
-		int _buttonPin;
-		int _servoPin;
+		int buttonPin;
+		int servoPin;
 		
 		// servo step delay and timer
-		long _stepDelay;
-		unsigned long _timerA;
+		long stepDelay;
+		unsigned long timerA;
 		
 		// holds current position and target position
-		int _positionNow;
-		int _targetPosition;
+		int positionNow;
+		int targetPosition;
 		
-		// save button state and last state
-		int _buttonState;
-		int _lastButtonState;
+		// save button state and last state of button
+		int buttonState;
+		int lastButtonState;
+		
+		// save last state of turnout
+		int lastState;
 		
 		// store if moving or not
-		boolean _isMoving;
+		boolean isMoving;
 		
 		// create servo object
-		Servo _servo;
+		Servo servo;
 };
 
 #endif

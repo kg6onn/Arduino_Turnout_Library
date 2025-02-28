@@ -11,49 +11,51 @@
 
 Turnout::Turnout(int servoPin, int straight, int divergent, long stepDelay)
 {
-	_buttonPin = 99;
-	_servoPin = servoPin;
-	_straight = straight;
-	_divergent = divergent;
-	_stepDelay = stepDelay;
-	_buttonState = 0;
-	_lastButtonState = 0;
-	_timerA = 0;
-	_positionNow = _divergent; 
-	_targetPosition = _straight;
-	_isMoving = false;
+	buttonPin = 99;
+	this->servoPin = servoPin;
+	this->straight = straight;
+	this->divergent = divergent;
+	this->stepDelay = stepDelay;
+	buttonState = 0;
+	lastButtonState = 0;
+	timerA = 0;
+	positionNow = divergent; 
+	targetPosition = straight;
+	isMoving = false;
+	lastState = 0;
 }
 
 Turnout::Turnout(int buttonPin, int servoPin, int straight, int divergent, long stepDelay)
 {
-	_buttonPin = buttonPin;
-	_servoPin = servoPin;
-	_straight = straight;
-	_divergent = divergent;
-	_stepDelay = stepDelay;
-	_buttonState = 0;
-	_lastButtonState = 0;
-	_timerA = 0;
-	_positionNow = _divergent; 
-	_targetPosition = _straight;
-	_isMoving = false;
+	this->buttonPin = buttonPin;
+	this->servoPin = servoPin;
+	this->straight = straight;
+	this->divergent = divergent;
+	this->stepDelay = stepDelay;
+	buttonState = 0;
+	lastButtonState = 0;
+	timerA = 0;
+	positionNow = divergent; 
+	targetPosition = straight;
+	isMoving = false;
+	lastState = 0;
 }
 
-void Turnout::TurnoutSetup()
+void Turnout::turnoutSetup()
 {
-	if(_buttonPin != 99)
+	if(buttonPin != 99)
 	{
-		pinMode(_buttonPin, INPUT_PULLUP);
+		pinMode(buttonPin, INPUT_PULLUP);
 	}
 	
-    _servo.attach(_servoPin);
-    _positionNow = (_divergent + _straight)/2;
-    _servo.write(_positionNow);
+    servo.attach(servoPin);
+    positionNow = (divergent + straight)/2;
+    servo.write(positionNow);
 }
 
-void Turnout::Update()
+void Turnout::update()
 {
-	if(_buttonPin != 99)
+	if(buttonPin != 99)
 	{
 		checkButton();
 	}
@@ -63,11 +65,11 @@ void Turnout::Update()
 int Turnout::getPosition()
 {
 	int retVal = 0;
-    if(_isMoving)
+    if(isMoving)
     {
       retVal = 1;
     }
-    else if(_positionNow == _straight)
+    else if(positionNow == straight)
     {
       retVal = 2;
     }
@@ -80,30 +82,49 @@ int Turnout::getPosition()
 
 int Turnout::getActualPosition()
 {
-	return _positionNow;
+	return positionNow;
 }
 
 void Turnout::setTurnout()
 {
-	_servo.attach(_servoPin);
-    _isMoving = true;
-    if(_positionNow == _straight)
-     {
-      _targetPosition = _divergent;
-     }
-     else if(_positionNow == _divergent)
-     {
-      _targetPosition = _straight;
-     }
+	servo.attach(servoPin);
+	isMoving = true;
+	if(positionNow == straight)
+	{
+	  targetPosition = divergent;
+	}
+	else if(positionNow == divergent)
+	{
+	  targetPosition = straight;
+	}
 }
 
-boolean Turnout::StartTimer(unsigned long &_timer, long interval)
+void Turnout::cmriTurnout(byte state)
+{
+	if(state != lastState)
+	{
+		lastState = state;
+		servo.attach(servoPin);
+		isMoving = true;
+		if(positionNow == straight)
+		{
+		  targetPosition = divergent;
+		}
+		else if(positionNow == divergent)
+		{
+		targetPosition = straight;
+		}
+	}
+	
+}
+
+boolean Turnout::startTimer(unsigned long &timer, long interval)
 {
 	unsigned long CurrentMillis = millis();
   
-    if(CurrentMillis - _timer >= interval)
+    if(CurrentMillis - timer >= interval)
     {
-      _timer = CurrentMillis;
+      timer = CurrentMillis;
       return true;
     }
     else
@@ -114,34 +135,34 @@ boolean Turnout::StartTimer(unsigned long &_timer, long interval)
 
 void Turnout::checkButton()
 {
-	_buttonState = digitalRead(_buttonPin);
-    if(_buttonState != _lastButtonState)
+	buttonState = digitalRead(buttonPin);
+    if(buttonState != lastButtonState)
     {
-      if(_buttonState == LOW)
+      if(buttonState == LOW)
       {
         setTurnout();
       }
     }
-    _lastButtonState = _buttonState;
+    lastButtonState = buttonState;
 }
 
 void Turnout::throwTurnout()
 {
-	boolean itsTime = StartTimer(_timerA, _stepDelay);
+	boolean itsTime = startTimer(timerA, stepDelay);
     if(itsTime)
     {
-      if(_positionNow < _targetPosition)
+      if(positionNow < targetPosition)
       {
-        _servo.write(++_positionNow);
+        servo.write(++positionNow);
       }
-      else if(_positionNow != _targetPosition)
+      else if(positionNow != targetPosition)
       {
-          _servo.write(--_positionNow);
+          servo.write(--positionNow);
       }
     }
-    if(_positionNow == _targetPosition)
+    if(positionNow == targetPosition)
     {
-      _servo.detach();
-      _isMoving = false;
+      servo.detach();
+      isMoving = false;
     }
 }
