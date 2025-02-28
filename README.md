@@ -10,8 +10,7 @@ built-in push button control or using your own system to determine when the turn
 
 Installing Library:
 
-Place the "Turnout" directory in your Arduino "libraries" directory.  The turnout library includes the Arduino
-Servo library so there is no need to import Servo into your main sketch.
+Place the "Turnout" directory in your Arduino "libraries" directory.
 
 Including Library:
 
