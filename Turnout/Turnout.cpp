@@ -85,6 +85,20 @@ int Turnout::getActualPosition()
 	return positionNow;
 }
 
+int Turnout::getCMRIposition()
+{
+	
+	if(positionNow == straight)
+	{	
+		return 0;
+		
+	}
+	else if(positionNow == divergent)
+	{
+		return 1;
+	}
+}
+
 void Turnout::setTurnout()
 {
 	servo.attach(servoPin);
@@ -101,21 +115,19 @@ void Turnout::setTurnout()
 
 void Turnout::cmriTurnout(byte state)
 {
-	if(state != lastState)
+	if(state == 0x01)
 	{
-		lastState = state;
-		servo.attach(servoPin);
-		isMoving = true;
-		if(positionNow == straight)
-		{
-		  targetPosition = divergent;
-		}
-		else if(positionNow == divergent)
-		{
-		targetPosition = straight;
-		}
+	  servo.attach(servoPin);
+	  isMoving = true;
+	  targetPosition = straight;
+		  
 	}
-	
+	else if(state == 0x00)
+	{
+	  servo.attach(servoPin);
+	  isMoving = true;	
+	  targetPosition = divergent;
+	}
 }
 
 boolean Turnout::startTimer(unsigned long &timer, long interval)

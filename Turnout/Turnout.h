@@ -21,6 +21,7 @@ class Turnout
 		int getActualPosition();
 		void setTurnout();
 		void cmriTurnout(byte state);
+		int getCMRIposition();
 		
 	private:
 		boolean startTimer(unsigned long &_timer, long interval);
