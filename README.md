@@ -42,7 +42,7 @@ The other constructor is the same except the button pin is not included.  It is 
 
 Turnout(int servoPin, int straight, int divergent, long stepDelay)
 
-With this constructor, the optional button is not used and it is never setup as an input and the buttonPin is set to decimal 99. The firmware will not setup the pish button or check for button presses if the button is set to 99.
+With this constructor, the optional button is not used and it is never setup as an input and the buttonPin is set to decimal 99. The firmware will not setup the push button or check for button presses if the button is set to 99.
 
 Public Functions:
 
