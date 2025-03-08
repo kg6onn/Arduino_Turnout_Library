@@ -55,4 +55,8 @@ update():
 
 This function needs to be placed in the void loop() Arduino function. It is the only other function required to get your servo controlled turnout operational if you have set up your turnout constructor with a built-in push button. The other required function is turnoutSetup() above. The update function will check if the push button has been pressed if one has been set up and throw the turnout if the button has been pressed or if another event has called for the turnout to be thrown.
 
+setTurnout():
+
+This function is an alternative way of throwing a turnout. It needs to be placed inside a conditional statement. If you place it straight into your main loop it will work, but what you will have is a fancy "servo sweeper" functional that goes back and forth between your straight and divergent variables. Probably not what you want for a model railroad turnout!
+
 
