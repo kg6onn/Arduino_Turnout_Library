@@ -59,4 +59,8 @@ setTurnout():
 
 This function is an alternative way of throwing a turnout. It needs to be placed inside a conditional statement. If you place it straight into your main loop it will work, but what you will have is a fancy "servo sweeper" functional that goes back and forth between your straight and divergent variables. Probably not what you want for a model railroad turnout!
 
+cmriTurnout(byte state):
+
+This is another alternative way of throwing the turnout designed specifically to work with C/MRI. To put the turnout into the straight position, pass a byte value of 1. To put it into the divergent position, pass a byte value of 0. See example sketch on how to incorporate this into Model Railroad Control System's CPNode.  Keep in mind that with the MRCS library the bit values can be inverted and if you are using JMRI they can also be inverted there.
+
 
