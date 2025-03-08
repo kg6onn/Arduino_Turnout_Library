@@ -51,4 +51,8 @@ turnoutSetup():
 This function needs to be called in the Void setup() method in your Arduino sketch.  It will attach the servo to
 the pin and will move the servo to half the distance between your straight and divergent angles before slowing moving into the straight position.  The idea with this was to put the turnout into a known postion at startup.
 
+update():
+
+This function needs to be placed in the void loop() Arduino function. It is the only other function required to get your servo controlled turnout operational if you have set up your turnout constructor with a built-in push button. The other required function is turnoutSetup() above. The update function will check if the push button has been pressed if one has been set up and throw the turnout if the button has been pressed or if another event has called for the turnout to be thrown.
+
 
