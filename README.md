@@ -6,7 +6,7 @@ for a model railroad.  It uses Arduino millis() function for slow motion control
 utilizing the library for multiple turnouts.
 
 The library contains an overloaded constructor so you have the option of controling a turnout with the library's 
-built-in push button control or using your own system to determine when the turnout will be thrown.  It is also possible to use the built-in pushbutton and other methods of control as well.  It is also possible to use the library with Model Railroad Control Systems CPNode library for use with their CPNode C/MRI on Arduino Nodes.
+built-in push button control or using your own system to determine when the turnout will be thrown.  It is also possible to use the built-in pushbutton and other methods of control as well.  It is also possible to use the library with Model Railroad Control System's CPNode library for use with their CPNode C/MRI on Arduino Nodes.
 
 Installing Library:
 
@@ -61,6 +61,6 @@ This function is an alternative way of throwing a turnout. It needs to be placed
 
 cmriTurnout(byte state):
 
-This is another alternative way of throwing the turnout designed specifically to work with C/MRI. To put the turnout into the straight position, pass a byte value of 1. To put it into the divergent position, pass a byte value of 0. See example sketch on how to incorporate this into Model Railroad Control System's CPNode.  Keep in mind that with the MRCS library the bit values can be inverted and if you are using JMRI they can also be inverted there.
+This is another alternative way of throwing the turnout designed specifically to work with C/MRI.  The firmware looks for a change in byte state from 0x00 to 0x01 or visa versa to throw the turnout. When used in conjuction with getCMRIposition(), the computer running JMRI or other control software will always have the current position of the turnout.  See example Arduino sketches on how to incorporate this into Model Railroad Control System's CPNode.  Keep in mind that with the MRCS library the bit values can be inverted and if you are using JMRI they can also be inverted there.
 
 
