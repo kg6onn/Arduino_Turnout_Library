@@ -2,6 +2,7 @@
  Turnout.h - Library for controling a model railroad turnout
  with a servo.
  Created by John Herbert, Februrary 11, 2025
+ Last update September 8, 2025
  Released into the public domain.
  */
  #ifndef Turnout_h
@@ -48,8 +49,8 @@ class Turnout
 		int buttonState;
 		int lastButtonState;
 		
-		// save last state of turnout
-		int lastState;
+		// save last CMRI command
+		byte lastCMRI;
 		
 		// store if moving or not
 		boolean isMoving;

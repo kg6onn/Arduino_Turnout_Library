@@ -2,6 +2,7 @@
  Turnout.cpp - Library for controling a model railroad turnout
  with a servo.
  Created by John Herbert, Februrary 11, 2025
+ Last Update: September 8, 2025
  Released into the public domain.
  */
 
@@ -22,7 +23,7 @@ Turnout::Turnout(int servoPin, int straight, int divergent, long stepDelay)
 	positionNow = divergent; 
 	targetPosition = straight;
 	isMoving = false;
-	lastState = 0;
+	byte lastCMRI = 0x00;
 }
 
 Turnout::Turnout(int buttonPin, int servoPin, int straight, int divergent, long stepDelay)
@@ -38,7 +39,7 @@ Turnout::Turnout(int buttonPin, int servoPin, int straight, int divergent, long 
 	positionNow = divergent; 
 	targetPosition = straight;
 	isMoving = false;
-	lastState = 0;
+	byte lastCMRI = 0x00;
 }
 
 void Turnout::turnoutSetup()
@@ -91,7 +92,6 @@ int Turnout::getCMRIposition()
 	if(positionNow == straight)
 	{	
 		return 0;
-		
 	}
 	else if(positionNow == divergent)
 	{
@@ -115,18 +115,11 @@ void Turnout::setTurnout()
 
 void Turnout::cmriTurnout(byte state)
 {
-	if(state == 0x01)
+	byte currentState = state ^ lastCMRI;
+	if(currentState)
 	{
-	  servo.attach(servoPin);
-	  isMoving = true;
-	  targetPosition = straight;
-		  
-	}
-	else if(state == 0x00)
-	{
-	  servo.attach(servoPin);
-	  isMoving = true;	
-	  targetPosition = divergent;
+		setTurnout();
+		lastCMRI = state;
 	}
 }
 
@@ -167,7 +160,7 @@ void Turnout::throwTurnout()
       {
         servo.write(++positionNow);
       }
-      else if(positionNow != targetPosition)
+      else if(positionNow > targetPosition)
       {
           servo.write(--positionNow);
       }
