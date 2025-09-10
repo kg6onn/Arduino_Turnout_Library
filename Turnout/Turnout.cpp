@@ -115,8 +115,8 @@ void Turnout::setTurnout()
 
 void Turnout::cmriTurnout(byte state)
 {
-	byte currentState = state ^ lastCMRI;
-	if(currentState)
+	byte changedState = state ^ lastCMRI;
+	if(changedState)
 	{
 		setTurnout();
 		lastCMRI = state;
