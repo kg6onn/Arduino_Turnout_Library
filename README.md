@@ -6,7 +6,8 @@ for a model railroad.  It uses Arduino millis() function for slow motion control
 utilizing the library for multiple turnouts.
 
 The library contains an overloaded constructor so you have the option of controling a turnout with the library's 
-built-in push button control or using your own system to determine when the turnout will be thrown.  It is also possible to use the built-in pushbutton and other methods of control as well.  It is also possible to use the library with Model Railroad Control System's CPNode library for use with their CPNode C/MRI on Arduino Nodes.
+built-in push button control or using your own system to determine when the turnout will be thrown.  It also contains special functions that allow the library
+to be incorporated into Arduino sketches for use with Model Railroad Control System's CPNode library.
 
 Installing Library:
 
@@ -61,8 +62,20 @@ This function is an alternative way of throwing a turnout. It needs to be placed
 
 This function does not directly throw the turnout. Instead, it changes the target position to whatever value the current position is not in.  The actual throwing of the turnout (moving the servo), is handled by the private function throwTurnout(). setTurnout() is also used internally by the public function cmriTurnout() and by the private function checkButton(), which checks if the optional local push button has been pressed.
 
+getPosition():
+
+This function returns 1 if the turnout is moving, 2 if the position is straight and 3 if the position is divergent. This function should be used if the library is used for a stand alone Arduino sketch without C/MRI. See getCMRIposition() if you are using C/MRI.
+
+getActualPosition():
+
+This function simply returns the actual current position of the turnout in real time.  It could be useful for debugging purposes.
+
 cmriTurnout(byte state):
 
-This is another alternative way of throwing the turnout designed specifically to work with C/MRI.  The firmware looks for a change in byte state from 0x00 to 0x01 or visa versa to throw the turnout. When used in conjuction with getCMRIposition(), the computer running JMRI or other control software will always have the current position of the turnout.  See example Arduino sketches on how to incorporate this into Model Railroad Control System's CPNode.  Keep in mind that with the MRCS library the bit values can be inverted and if you are using JMRI they can also be inverted there.
+This is another alternative way of throwing the turnout designed specifically to work with C/MRI.  The firmware looks for a change in byte state from 0x00 to 0x01 or visa versa to throw the turnout. When used in conjuction with getCMRIposition(), the computer running JMRI or other control software will always have the current position of the turnout.  See example Arduino sketches on how to incorporate this into Model Railroad Control System's (MRCS) CPNode Arduino example sketches.  Keep in mind that with the MRCS library the bit values can be inverted and if you are using JMRI they can also be inverted there.
+
+getCMRIposition():
+
+This function returns 0 if the position is straight or 1 if divergent.  See example sketches to see how to incorporate this function into MRCS example CPnode sketches.  If you are using a local control button, this bit can use the bit location that used to be used for a CMRI input.  In that way, you can have local control even when the computer is off and no pins or bits were wasted.
 
 
