@@ -7,7 +7,7 @@ utilizing the library for multiple turnouts.
 
 The library contains an overloaded constructor so you have the option of controling a turnout with the library's 
 built-in push button control or using your own system to determine when the turnout will be thrown.  It also contains special functions that allow the library
-to be incorporated into Arduino sketches for use with Model Railroad Control System's CPNode library.
+to be incorporated into Arduino sketches for use with Model Railroad Control System's cpNode library.
 
 Installing Library:
 
@@ -78,4 +78,17 @@ getCMRIposition():
 
 This function returns 0 if the position is straight or 1 if divergent.  See example sketches to see how to incorporate this function into MRCS example CPnode sketches.  If you are using a local control button, this bit can use the bit location that used to be used for a CMRI input.  In that way, you can have local control even when the computer is off and no pins or bits were wasted.
 
+Links:
+
+If you are using the Turnout library with cpNode and C/MRI, you will also need the cpNode library:
+
+<https://github.com/plocher/cpNode>
+
+Here is the link to MRCS:
+
+<https://modelrailroadcontrolsystems.com/>
+
+Special Thanks:
+
+I'd like to thank Seth Neumann and the late Chuck Catania of Model Railroad Control Systems for developing the cpNode and to John Plocher for updating the cpNode library.  Finally, I'd like to thank Rob of <https://thenscaler.com/> blog for the original idea of using an Arduino and servo for turnout control.
 
