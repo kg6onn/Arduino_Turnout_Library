@@ -58,7 +58,7 @@ This function needs to be placed in the void loop() Arduino function. It is the 
 
 setTurnout():
 
-This function is an alternative way of throwing a turnout. It needs to be placed inside a conditional statement. If you place it straight into your main loop it will work, but what you will have is a fancy "servo sweeper" functional that goes back and forth between your straight and divergent variables. Probably not what you want for a model railroad turnout! 
+This function is an alternative way of throwing a turnout. It needs to be placed inside a conditional statement. If you place it straight into your main loop it will work, but what you will have is a fancy "servo sweeper" function that goes back and forth between your straight and divergent variables. Probably not what you want for a model railroad turnout! 
 
 This function does not directly throw the turnout. Instead, it changes the target position to whatever value the current position is not in.  The actual throwing of the turnout (moving the servo), is handled by the private function throwTurnout(). setTurnout() is also used internally by the public function cmriTurnout() and by the private function checkButton(), which checks if the optional local push button has been pressed.
 
