@@ -25,7 +25,7 @@ class Turnout
 		int getCMRIposition();
 		
 	private:
-		boolean startTimer(unsigned long &_timer, long interval);
+		boolean startTimer();
 		void checkButton();
 		void throwTurnout();
 		

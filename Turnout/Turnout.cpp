@@ -123,13 +123,13 @@ void Turnout::cmriTurnout(byte state)
 	}
 }
 
-boolean Turnout::startTimer(unsigned long &timer, long interval)
+boolean Turnout::startTimer()
 {
 	unsigned long CurrentMillis = millis();
   
-    if(CurrentMillis - timer >= interval)
+    if(CurrentMillis - timerA >= stepDelay)
     {
-      timer = CurrentMillis;
+      timerA = CurrentMillis;
       return true;
     }
     else
@@ -153,7 +153,7 @@ void Turnout::checkButton()
 
 void Turnout::throwTurnout()
 {
-	boolean itsTime = startTimer(timerA, stepDelay);
+	boolean itsTime = startTimer();
     if(itsTime)
     {
       if(positionNow < targetPosition)
