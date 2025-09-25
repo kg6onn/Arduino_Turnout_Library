@@ -90,5 +90,5 @@ Here is the link to MRCS:
 
 Special Thanks:
 
-I'd like to thank Seth Neumann and the late Chuck Catania of Model Railroad Control Systems for developing the cpNode and to John Plocher for updating the cpNode library.  Finally, I'd like to thank Rob of <https://thenscaler.com/> blog for the original idea of using an Arduino and servo for turnout control.
+I'd like to thank Seth Neumann and the late Chuck Catania of Model Railroad Control Systems for developing the cpNode and John Plocher for updating the cpNode library.  Finally, I'd like to thank Rob of <https://thenscaler.com/> blog for the original idea of using an Arduino and servo for turnout control.
 
