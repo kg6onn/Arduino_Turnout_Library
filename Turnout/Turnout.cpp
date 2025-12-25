@@ -24,6 +24,7 @@ Turnout::Turnout(int servoPin, int straight, int divergent, long stepDelay)
 	targetPosition = straight;
 	isMoving = false;
 	byte lastCMRI = 0x00;
+	cmriPosition = 0;
 }
 
 Turnout::Turnout(int buttonPin, int servoPin, int straight, int divergent, long stepDelay)
@@ -40,6 +41,7 @@ Turnout::Turnout(int buttonPin, int servoPin, int straight, int divergent, long 
 	targetPosition = straight;
 	isMoving = false;
 	byte lastCMRI = 0x00;
+	cmriPosition = 0;
 }
 
 void Turnout::turnoutSetup()
@@ -88,14 +90,18 @@ int Turnout::getActualPosition()
 
 int Turnout::getCMRIposition()
 {
-	
+	return cmriPosition;
+}
+
+void Turnout::setCMRIposition()
+{
 	if(positionNow == straight)
 	{	
-		return 0;
+	  cmriPosition = 0;
 	}
 	else if(positionNow == divergent)
 	{
-		return 1;
+	  cmriPosition = 1;
 	}
 }
 
@@ -168,6 +174,7 @@ void Turnout::throwTurnout()
     if(positionNow == targetPosition)
     {
       servo.detach();
+      setCMRIposition();
       isMoving = false;
     }
 }

@@ -28,6 +28,7 @@ class Turnout
 		boolean startTimer();
 		void checkButton();
 		void throwTurnout();
+		void setCMRIposition();
 		
 		// hold angle
 		int straight;
@@ -51,6 +52,9 @@ class Turnout
 		
 		// save last CMRI command
 		byte lastCMRI;
+		
+		// save CMRI position of turnout
+		int cmriPosition;
 		
 		// store if moving or not
 		boolean isMoving;
