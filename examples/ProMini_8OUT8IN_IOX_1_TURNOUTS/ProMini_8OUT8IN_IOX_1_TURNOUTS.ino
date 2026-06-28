@@ -1,40 +1,40 @@
 // *************************************************
-// CMRI/Net example Sketch: ProMini
+// CMRI/Net example Sketch: ProMini 8OUT 8IN
 // Onboard I/O:   8 bits of OUTPUT
 //                8 bits of INPUT
-// IOX I/O:      NO IOX-16s
+// IOX I/O:      1x IOX-16 (1 port IN, 1 OUT)
 // *************************************************
 //
 //  Reserved I/O pins are:
 //   D0 - RX  CMRI RS485 Receive
 //   D1 - TX  CMRI RS485 Transmit
-// Modified for use with Turnout library to
-// enable servo connection directly to cpNode.
-
+//   A4 - SDA I2C Data
+//   A5 - SCL I2C Clock
 
 #include "cpNode.h"
-#include "Turnout.h"  // Include Turnout library
+#include "Turnout.h"
+#include <Wire.h>  // for the I/O expander
 
 cpNode cmri;    // Processing logic for handling CMRINet packets
+IOX  iox;
 
-// Create Turnout Objects
-Turnout turnout1(8, 90, 180, 70);
-Turnout turnout2(7, 90, 180, 70);
-Turnout turnout3(6, 90, 180, 70);
-Turnout turnout4(5, 90, 180, 70);
+
+// Create Turnout objects
+Turnout turnout1(10, 2, 15, 1);
 
 const int  nodeID = 0;                            // 0...63 (nodeID + ord('A') => 'A'..chr(127))
 const long CMRINET_SPEED = 19200;                 // 9600, 19200 ...
 
 // the following need to match the code in setup(), pack() and unpack()...
-const int  InputBytes  = 2 + 0;                    // 2x onboard
-const int  OutputBytes = 2 + 0;                    // 2x onboard
+const int  InputBytes  = 2 + 1;                    // 2x onboard plus 1 IOX port (A)
+const int  OutputBytes = 2 + 1;                    // 2x onboard plus 1 IOX port (B)
 
 void setup(void) {
     // *************************************************
     // *******          Setup CMRI            **********
     // *************************************************
-
+    turnout1.turnoutSetup();
+    
     Serial.begin(CMRINET_SPEED);          // Set up and Open the CMRInet port
     while(!Serial) { };
 
@@ -49,7 +49,7 @@ void setup(void) {
     // *************************************************
     // *******   Setup  Onboard I/O           **********
     // *************************************************
-    pinMode( 2, OUTPUT);        // D2
+    //pinMode( 2, OUTPUT);        // D2
     pinMode( 3, OUTPUT);        // D3
     pinMode( 4, OUTPUT);        // D4
     pinMode( 5, OUTPUT);        // D5
@@ -58,7 +58,7 @@ void setup(void) {
     pinMode( 8, OUTPUT);        // D8
     pinMode( 9, OUTPUT);        // D9
 
-    digitalWrite( 2, 0 );       // if desired, set initial output state
+    //digitalWrite( 2, 0 );       // if desired, set initial output state
     digitalWrite( 3, 0 );
     digitalWrite( 4, 0 );
     digitalWrite( 5, 0 );
@@ -67,7 +67,7 @@ void setup(void) {
     digitalWrite( 8, 0 );
     digitalWrite( 9, 0 );
 
-    pinMode(10, INPUT_PULLUP);  // D10
+    //pinMode(10, INPUT_PULLUP);  // D10
     pinMode(11, INPUT_PULLUP);  // D11
     pinMode(12, INPUT_PULLUP);  // D12
     pinMode(13, INPUT_PULLUP);  // D13
@@ -76,11 +76,14 @@ void setup(void) {
     pinMode(A2, INPUT_PULLUP);  // A2
     pinMode(A3, INPUT_PULLUP);  // A3
 
-    //Setup turnouts
-    turnout1.turnoutSetup();
-    turnout2.turnoutSetup();
-    turnout3.turnoutSetup();
-    turnout4.turnoutSetup();
+    // *************************************************
+    // *******   Setup  I/O Expander (IOX)    **********
+    // *************************************************
+
+    Wire.begin();
+    iox.init( 0x20, IOX::PORT_A, IOX::IN);
+    iox.init( 0x20, IOX::PORT_B, IOX::OUT);
+    iox.write(0x20, IOX::PORT_B, 0x00);  // if desired, set initial output state
 }
 
 // ---------------------------------------------------------------------------
@@ -97,14 +100,11 @@ void setup(void) {
 // ---------------------------------------------------------------------------
 
 void pack(byte *IB, int len) {
-    // D10 - A3 are inputs
-    // IB0 ignored     IB1 8 bits
-    // xxxxxxxx        IIIIIIII
-    //----------------------------
     IB[0] = 0;  // shadowed by Output bits...
 
     IB[1] = 0;
-    IB[1] |= (!digitalRead(10) << 0);
+    //IB[1] |= (!digitalRead(10) << 0);
+    IB[1] |= (!turnout1.getCMRIposition() << 0);
     IB[1] |= (!digitalRead(11) << 1);
     IB[1] |= (!digitalRead(12) << 2);
     IB[1] |= (!digitalRead(13) << 3);
@@ -113,6 +113,7 @@ void pack(byte *IB, int len) {
     IB[1] |= (!digitalRead(A2) << 6);
     IB[1] |= (!digitalRead(A3) << 7);
 
+    IB[2] = iox.read(0x20, IOX::PORT_A);
 }
 
 // ---------------------------------------------------------------------------
@@ -127,32 +128,22 @@ void pack(byte *IB, int len) {
 //----------------------------------------------------------------------------
 
 void unpack(byte *OB, int len) {
-    // D2 - D9 are ouptuts
-    // OB0 8 bits     OB1 ignored
-    // OOOOOOOO       xxxxxxxx
-    //----------------------------
-    // Modified output bits to handle turnouts.
-    // Original lines no longer needed are commented out for reference.
-    digitalWrite( 2, (( OB[0] >> 0) &  0x01) );
+    //digitalWrite( 2, (( OB[0] >> 0) &  0x01) );
+    turnout1.cmriTurnout( (( OB[0] >> 0) &  0x01) );
     digitalWrite( 3, (( OB[0] >> 1) &  0x01) );
     digitalWrite( 4, (( OB[0] >> 2) &  0x01) );
-    //digitalWrite( 5, (( OB[0] >> 3) &  0x01) );
-    turnout4.cmriTurnout( (( OB[0] >> 3) &  0x01) );
-    //digitalWrite( 6, (( OB[0] >> 4) &  0x01) );
-    turnout3.cmriTurnout(  (( OB[0] >> 4) &  0x01) );
-    //digitalWrite( 7, (( OB[0] >> 5) &  0x01) );
-    turnout2.cmriTurnout(  (( OB[0] >> 5) &  0x01) );
-    //digitalWrite( 8, (( OB[0] >> 6) &  0x01) );
-    turnout1.cmriTurnout(  (( OB[0] >> 6) &  0x01) );
+    digitalWrite( 5, (( OB[0] >> 3) &  0x01) );
+    digitalWrite( 6, (( OB[0] >> 4) &  0x01) );
+    digitalWrite( 7, (( OB[0] >> 5) &  0x01) );
+    digitalWrite( 8, (( OB[0] >> 6) &  0x01) );
     digitalWrite( 9, (( OB[0] >> 7) &  0x01) );
 
     // OB[1] is shadowed by the Input bits...
+
+    iox.write(0x20, IOX::PORT_B, OB[2]);
 }
 
 void loop(void) {
     cmri.proceess();   // process any C/MRI packets
-    turnout1.update();
-    turnout2.update();
-    turnout3.update();
-    turnout4.update();
+    turnout1.process();  // process any turnout events
 }

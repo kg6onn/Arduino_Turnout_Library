@@ -12,16 +12,16 @@
 //   A5 - SCL I2C Clock
 
 #include "cpNode.h"
-#include "Turnout.h"  // Include Turnout Library
+#include "Turnout.h"
 #include <Wire.h>  // for the I/O expander
 
 cpNode cmri;    // Processing logic for handling CMRINet packets
 IOX  iox;
 
-// Create a turnout object with local control
-Turnout turnout1(11, 8, 70, 100, 70);
-// Create another turnout without local control
-Turnout turnout2(9, 70, 100, 70);
+
+// Create Turnout objects
+Turnout turnout1(10, 2, 15, 1);
+Turnout turnout2(11, 3, 15, 2);
 
 const int  nodeID = 0;                            // 0...63 (nodeID + ord('A') => 'A'..chr(127))
 const long CMRINET_SPEED = 19200;                 // 9600, 19200 ...
@@ -34,7 +34,10 @@ void setup(void) {
     // *************************************************
     // *******          Setup CMRI            **********
     // *************************************************
-
+    // Setup turnouts
+    turnout1.turnoutSetup();
+    turnout2.turnoutSetup();
+    
     Serial.begin(CMRINET_SPEED);          // Set up and Open the CMRInet port
     while(!Serial) { };
 
@@ -49,17 +52,17 @@ void setup(void) {
     // *************************************************
     // *******   Setup  Onboard I/O           **********
     // *************************************************
-    pinMode( 2, OUTPUT);        // D2
-    pinMode( 3, OUTPUT);        // D3
+    //pinMode( 2, OUTPUT);        // D2
+    //pinMode( 3, OUTPUT);        // D3
     pinMode( 4, OUTPUT);        // D4
     pinMode( 5, OUTPUT);        // D5
     pinMode( 6, OUTPUT);        // D6
     pinMode( 7, OUTPUT);        // D7
-    //pinMode( 8, OUTPUT);        // D8  // Used by turnout1 for servo.
-    //pinMode( 9, OUTPUT);        // D9  // Used by turnout2 for servo.
+    pinMode( 8, OUTPUT);        // D8
+    pinMode( 9, OUTPUT);        // D9
 
-    digitalWrite( 2, 0 );       // if desired, set initial output state
-    digitalWrite( 3, 0 );
+    //digitalWrite( 2, 0 );       // if desired, set initial output state
+    //digitalWrite( 3, 0 );
     digitalWrite( 4, 0 );
     digitalWrite( 5, 0 );
     digitalWrite( 6, 0 );
@@ -67,18 +70,14 @@ void setup(void) {
     digitalWrite( 8, 0 );
     digitalWrite( 9, 0 );
 
-    pinMode(10, INPUT_PULLUP);  // D10
-    //pinMode(11, INPUT_PULLUP);  // D11  // Used by Turnout library for local control
+    //pinMode(10, INPUT_PULLUP);  // D10
+    //pinMode(11, INPUT_PULLUP);  // D11
     pinMode(12, INPUT_PULLUP);  // D12
     pinMode(13, INPUT_PULLUP);  // D13
     pinMode(A0, INPUT_PULLUP);  // A0
     pinMode(A1, INPUT_PULLUP);  // A1
     pinMode(A2, INPUT_PULLUP);  // A2
     pinMode(A3, INPUT_PULLUP);  // A3
-
-    // Setup turnout
-    turnout1.turnoutSetup();
-    turnout2.turnoutSetup();
 
     // *************************************************
     // *******   Setup  I/O Expander (IOX)    **********
@@ -107,9 +106,10 @@ void pack(byte *IB, int len) {
     IB[0] = 0;  // shadowed by Output bits...
 
     IB[1] = 0;
-    IB[1] |= (!digitalRead(10) << 0);
-    //IB[1] |= (!digitalRead(11) << 1);  // local control uses pin 11 now.
-    IB[1] |= (!turnout1.getCMRIposition() << 1);  // now this bit is used for C/MRI feedback.
+    //IB[1] |= (!digitalRead(10) << 0);
+    IB[1] |= (!turnout1.getCMRIposition() << 0);
+    //IB[1] |= (!digitalRead(11) << 1);
+    IB[1] |= (!turnout2.getCMRIposition() << 1);
     IB[1] |= (!digitalRead(12) << 2);
     IB[1] |= (!digitalRead(13) << 3);
     IB[1] |= (!digitalRead(A0) << 4);
@@ -132,16 +132,16 @@ void pack(byte *IB, int len) {
 //----------------------------------------------------------------------------
 
 void unpack(byte *OB, int len) {
-    digitalWrite( 2, (( OB[0] >> 0) &  0x01) );
-    digitalWrite( 3, (( OB[0] >> 1) &  0x01) );
+    //digitalWrite( 2, (( OB[0] >> 0) &  0x01) );
+    turnout1.cmriTurnout( (( OB[0] >> 0) &  0x01) );
+    //digitalWrite( 3, (( OB[0] >> 1) &  0x01) );
+    turnout2.cmriTurnout( (( OB[0] >> 1) &  0x01) );
     digitalWrite( 4, (( OB[0] >> 2) &  0x01) );
     digitalWrite( 5, (( OB[0] >> 3) &  0x01) );
     digitalWrite( 6, (( OB[0] >> 4) &  0x01) );
     digitalWrite( 7, (( OB[0] >> 5) &  0x01) );
-    //digitalWrite( 8, (( OB[0] >> 6) &  0x01) );  // used by turnout1 now.
-    turnout1.cmriTurnout(  (( OB[0] >> 6) &  0x01) ); // bit set to throw turnout1
-    //digitalWrite( 9, (( OB[0] >> 7) &  0x01) );  // used by turnout2 now
-    turnout2.cmriTurnout(  (( OB[0] >> 7) &  0x01) ); // bit set to throw turnout2
+    digitalWrite( 8, (( OB[0] >> 6) &  0x01) );
+    digitalWrite( 9, (( OB[0] >> 7) &  0x01) );
 
     // OB[1] is shadowed by the Input bits...
 
@@ -150,6 +150,6 @@ void unpack(byte *OB, int len) {
 
 void loop(void) {
     cmri.proceess();   // process any C/MRI packets
-    turnout1.update();  // process any turnout1 events
-    turnout2.update();  //process any turnout2 events
+    turnout1.process();  // process any turnout events
+    turnout2.process();
 }

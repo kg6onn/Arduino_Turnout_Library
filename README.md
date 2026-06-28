@@ -1,4 +1,8 @@
 # Arduino_Turnout_Library
+
+NOTE: Recent major update changed how library operates. The library no longer works as described below.
+This README will be updated to reflect this changes as I have time. 
+
 A Library for Arduino for controlling a model railroad turnout with a servo.
 
 This Arduino library is designed to create a slow motion turnout controller with a servo 
