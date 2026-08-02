@@ -76,6 +76,14 @@ void Turnout::turnoutSetup()
     targetPosition = straight;  // default startup target position
     positionNow = (divergent + straight)/2; // startup position
     servo.write(positionNow); // put the turnout into a known state (target position)
+    for(int i = positionNow; i <= targetPosition; i++)
+    {
+      servo.write(i);
+      delay(stepDelay);  // delay is only used in setup, never in main loop.
+     // Serial.println(i);
+    }
+    positionNow = targetPosition;
+    
     digitalWrite(LED_PIN, LOW); // Turn off built-in LED
 }
 // process turnout events.  This is the only function that needs to be called in main void loop
@@ -124,11 +132,11 @@ void Turnout::setCMRIposition()
   // Sets C/MRI state depending on current position.
 	if(positionNow == straight)
 	{	
-	  cmriPosition = 0;
+	  cmriPosition = 0;  
 	}
 	else if(positionNow == divergent)
 	{
-	  cmriPosition = 1;
+	  cmriPosition = 1; 
 	}
 }
 
